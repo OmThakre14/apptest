@@ -9,7 +9,18 @@ def app():
 def client(app):
     return app.test_client()
 
-def test_index(app, client):
+def clear_todos():
+    todos.clear()
+
+@pytest.fixture(autouse=True)
+def run_around_tests():
+    # Before each test, clear todos to start with a clean state
+    clear_todos()
+    yield
+    # After each test, clear todos again
+    clear_todos()
+
+def test_index(client):
     response = client.get('/')
     assert response.status_code == 200
 
